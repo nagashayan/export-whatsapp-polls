@@ -160,7 +160,7 @@ window.addEventListener('message', (e) => {
 
       let res = `"${sanitizedName}"` + "," + x.__x_sender.user;
       for (let i = 0; i < poll.__x__pollOptionsToLinks.size; i++) {
-        res += x.votes && x.votes.includes(i) ? ",X" : ",";
+        res += x.__x_selectedOptionLocalIds.includes(i) ? ",X" : ",";
       }
       return res;
     }).join("\n");
