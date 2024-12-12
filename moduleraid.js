@@ -144,7 +144,7 @@ window.addEventListener('message', (e) => {
     }, {})
 
     // Add total votes row with "Total" in English
-    csv += ",Total,";
+    csv += ",Total votes per option,";
 
     for (let i = 0; i < poll.__x__pollOptionsToLinks.size; i++) {
       csv += voteAccumulator[i] ? voteAccumulator[i] : 0;
