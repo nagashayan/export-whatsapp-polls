@@ -1,5 +1,4 @@
 {
-    "update_url": "https://clients2.google.com/service/update2/crx",
     "name": "Export WhatsApp Polls",
     "version": "0.1.0",
     "description": "Export Your WhatsApp Polls To Excel",
