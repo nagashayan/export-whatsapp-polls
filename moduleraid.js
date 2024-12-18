@@ -132,8 +132,15 @@ window.addEventListener('message', (e) => {
     console.log(votes);
     console.log(poll);
 
-    // Add the poll name as a row header
-    let csv = `"Poll Name: ${poll.__x_pollName}"\n`;
+    // Retrieve the group name from the parent chat
+    const chat = poll && Store.Chat.get(poll.__x_id.remote); // Get the chat object for the poll
+    const groupName = chat && chat.__x_name || "Unknown Group";
+
+    console.log("Group Name: ", groupName); // Log the group name
+
+    // Build the CSV with the group name included
+    let csv = `"Group Name: ${groupName}"\n`;
+    csv += `"Poll Name: ${poll.__x_pollName}"\n`;
 
     // Add column headers
     csv += "Name, Phone," + poll.__x_pollOptions.map(x => `"${x.name}"`).join(",") + "\n";
