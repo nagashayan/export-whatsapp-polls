@@ -129,14 +129,10 @@ window.addEventListener('message', (e) => {
   if (e.data.export) {
     const votes = Store.PollVote.getModelsArray().filter(x => e.data.export.includes(x.__x_parentMsgKey._serialized))
     const poll = Store.Msg.getModelsArray().filter(m => m.type == "poll_creation").find(m => e.data.export.includes(m.__x_id.id))
-    console.log(votes);
-    console.log(poll);
 
     // Retrieve the group name from the parent chat
     const chat = poll && Store.Chat.get(poll.__x_id.remote); // Get the chat object for the poll
-    const groupName = chat && chat.__x_name || "Unknown Group";
-
-    console.log("Group Name: ", groupName); // Log the group name
+    const groupName = chat && chat.__x_formattedTitle || "Unknown Group";
 
     // Build the CSV with the group name included
     let csv = `"Group Name: ${groupName}"\n`;
