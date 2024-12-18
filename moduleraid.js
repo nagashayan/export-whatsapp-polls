@@ -138,10 +138,7 @@ window.addEventListener('message', (e) => {
     let csv = `"Group Name: ${groupName}"\n`;
     csv += `"Poll Name: ${poll.__x_pollName}"\n`;
     // Add total votes row with "Total" in English
-    csv += ",Total votes per option,";
-    // Add column headers
-    csv += "Name, Phone," + poll.__x_pollOptions.map(x => `"${x.name}"`).join(",") + "\n";
-
+    csv += "Total votes per option,";
     const voteAccumulator = votes.reduce((acc, x) => {
       x.__x_selectedOptionLocalIds.forEach(y => acc[y] = (acc[y] || 0) + 1)
       return acc
@@ -152,6 +149,8 @@ window.addEventListener('message', (e) => {
       csv += ",";
     }
     csv += "\n";
+    // Add column headers
+    csv += "Name, Phone," + poll.__x_pollOptions.map(x => `"${x.name}"`).join(",") + "\n";
 
     // Add vote data rows
     csv += votes.map(x => {
