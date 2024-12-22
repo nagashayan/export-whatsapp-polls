@@ -150,7 +150,7 @@ window.addEventListener('message', (e) => {
     }
     csv += "\n";
     // Add column headers
-    csv += "Name, Phone," + poll.__x_pollOptions.map(x => `"${x.name}"`).join(",") + "\n";
+    csv += "Name, Phone," + poll.__x_pollOptions.map(x => `"${x.name}"`).join(",") + ", pollname, groupname" + "\n";
 
     // Add vote data rows
     csv += votes.map(x => {
@@ -162,6 +162,8 @@ window.addEventListener('message', (e) => {
       for (let i = 0; i < poll.__x__pollOptionsToLinks.size; i++) {
         res += x.__x_selectedOptionLocalIds.includes(i) ? ",X" : ",";
       }
+      // Add pollname and groupname to the row
+      res += `,"${poll.__x_pollName}","${groupName}"`;
       return res;
     }).join("\n");
 
