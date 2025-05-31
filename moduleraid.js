@@ -127,48 +127,54 @@ const initInterval = setInterval(() => {
 
 window.addEventListener('message', (e) => {
   if (e.data.export) {
-    const votes = Store.PollVote.getModelsArray().filter(x => e.data.export.includes(x.__x_parentMsgKey._serialized))
-    const poll = Store.Msg.getModelsArray().filter(m => m.type == "poll_creation").find(m => e.data.export.includes(m.__x_id.id))
+    try {
+      const votes = Store.PollVote.getModelsArray().filter(x => e.data.export.includes(x.__x_parentMsgKey._serialized))
+      const poll = Store.Msg.getModelsArray().filter(m => m.type == "poll_creation").find(m => e.data.export.includes(m.__x_id.id))
 
-    // Retrieve the group name from the parent chat
-    const chat = poll && Store.Chat.get(poll.__x_id.remote); // Get the chat object for the poll
-    const groupName = chat && chat.__x_formattedTitle || "Unknown Group";
+      // Retrieve the group name from the parent chat
+      const chat = poll && Store.Chat.get(poll.__x_id.remote); // Get the chat object for the poll
+      const groupName = chat && chat.__x_formattedTitle || "Unknown Group";
 
-    // Build the CSV with the group name included
-    let csv = `"Group Name: ${groupName}"\n`;
-    csv += `"Poll Name: ${poll.__x_pollName}"\n`;
-    // Add total votes row with "Total" in English
-    csv += "Total votes per option,";
-    const voteAccumulator = votes.reduce((acc, x) => {
-      x.__x_selectedOptionLocalIds.forEach(y => acc[y] = (acc[y] || 0) + 1)
-      return acc
-    }, {})
+      // Build the CSV with the group name included
+      let csv = `"Group Name: ${groupName}"\n`;
+      csv += `"Poll Name: ${poll.__x_pollName}"\n`;
+      // Add total votes row with "Total" in English
+      csv += "Total votes per option,";
+      const voteAccumulator = votes.reduce((acc, x) => {
+        x.__x_selectedOptionLocalIds.forEach(y => acc[y] = (acc[y] || 0) + 1)
+        return acc
+      }, {})
 
-    for (let i = 0; i < poll.__x__pollOptionsToLinks.size; i++) {
-      csv += voteAccumulator[i] ? voteAccumulator[i] : 0;
-      csv += ",";
-    }
-    csv += "\n";
-    // Add column headers
-    csv += "Name, Phone," + poll.__x_pollOptions.map(x => `"${x.name}"`).join(",") + "\n";
-
-    // Add vote data rows
-    csv += votes.map(x => {
-      const rawName = Store.Contact.getModelsArray().find(y => y.__x_id.user == x.__x_sender.user).__x_pushname ||
-        Store.Contact.getModelsArray().find(y => y.__x_id.user == x.__x_sender.user).__x_name || "";
-      const sanitizedName = rawName.replace(/[^\w\s]/gi, '').trim();
-
-      let res = `"${sanitizedName}"` + "," + x.__x_sender.user;
       for (let i = 0; i < poll.__x__pollOptionsToLinks.size; i++) {
-        res += x.__x_selectedOptionLocalIds.includes(i) ? ",X" : ",";
+        csv += voteAccumulator[i] ? voteAccumulator[i] : 0;
+        csv += ",";
       }
-      return res;
-    }).join("\n");
+      csv += "\n";
+      // Add column headers
+      csv += "Name, Phone," + poll.__x_pollOptions.map(x => `"${x.name}"`).join(",") + "\n";
 
-    // Download the CSV
-    const a = document.createElement("a");
-    a.href = 'data:text/csv; charset=utf-8,' + encodeURIComponent("\uFEFF" + csv);
-    a.download = "votes.csv";
-    a.click();
+      // Add vote data rows
+      csv += votes.map(x => {
+        const rawName = Store.Contact.getModelsArray().find(y => y.__x_id.user == x.__x_sender.user).__x_pushname ||
+          Store.Contact.getModelsArray().find(y => y.__x_id.user == x.__x_sender.user).__x_name || "";
+        const sanitizedName = rawName.replace(/[^\w\s]/gi, '').trim();
+
+        let res = `"${sanitizedName}"` + "," + x.__x_sender.user;
+        for (let i = 0; i < poll.__x__pollOptionsToLinks.size; i++) {
+          res += x.__x_selectedOptionLocalIds.includes(i) ? ",X" : ",";
+        }
+        return res;
+      }).join("\n");
+
+      // Download the CSV
+      const a = document.createElement("a");
+      a.href = 'data:text/csv; charset=utf-8,' + encodeURIComponent("\uFEFF" + csv);
+      a.download = "votes.csv";
+      a.click();
+    }
+    catch (err) {
+      console.error("Failed to export votes:", err);
+      alert("WhatsApp structure may have changed. Please report this.");
+    }
   }
 })
