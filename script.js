@@ -23,10 +23,11 @@ setTimeout(() => {
                 cloned.textContent = "Export votes";
                 cloned.style.marginLeft = "10px";
                 cloned.addEventListener("click", (e) => {
-                    if (!isVoteModalVisible()) {
-                        alert("⚠️ Please click on ‘View votes’ for this poll before exporting.");
-                        return;
-                    }
+                    simulateViewVotesClick(e);
+                    // if (!isVoteModalVisible()) {
+                    //     alert("⚠️ Please click on ‘View votes’ for this poll before exporting.");
+                    //     return;
+                    // }
                     console.log("exported");
                     const messageId = findMessageId(e.target);
                     const coreId = messageId?.split("_")?.[2];  // gets the part like 3EB0C8E64EF4CFE39D18
@@ -63,3 +64,22 @@ function findMessageId(element) {
     }
     return null;
 }
+
+function simulateViewVotesClick(event) {
+    // The button's wrapper (same place you appended the export button)
+    const buttonWrapper = event.target.closest('.xaw8158');
+    if (!buttonWrapper) {
+        console.warn('Button wrapper (.xaw8158) not found.');
+        return;
+    }
+
+    // Try to find the original view votes button inside the wrapper
+    const viewVotesButton = buttonWrapper.querySelector('button:not(.export-votes-button)');
+    if (viewVotesButton) {
+        viewVotesButton.click();
+        console.log("🔘 Simulated click on View votes");
+    } else {
+        console.warn('"View votes" button not found in wrapper.');
+    }
+}
+
