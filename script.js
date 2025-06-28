@@ -42,6 +42,16 @@ function injectExportButton(wrapper) {
     if (!cloned) return;
 
     cloned.textContent = "Export votes";
+    cloned.title = "Export votes";
+    cloned.removeAttribute("aria-disabled");
+    cloned.removeAttribute("tabindex");
+
+    cloned.style.opacity = "1";
+    cloned.style.pointerEvents = "auto";
+    cloned.style.color = "#21c063"; // or any suitable text color
+    cloned.style.cursor = "pointer";
+    cloned.disabled = false;
+
     cloned.classList.add("export-votes-button");
 
     cloned.addEventListener("click", (e) => {
