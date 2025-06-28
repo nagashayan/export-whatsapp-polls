@@ -128,7 +128,9 @@ const initInterval = setInterval(() => {
 window.addEventListener('message', (e) => {
   if (e.data.export) {
     try {
-      const votes = Store.PollVote.getModelsArray().filter(x => e.data.export.includes(x.__x_parentMsgKey._serialized))
+      const votes = Store.PollVote.getModelsArray().filter(
+        x => x.parentMsgKey?.id === e.data.export
+      );
       const poll = Store.Msg.getModelsArray().filter(m => m.type == "poll_creation").find(m => e.data.export.includes(m.__x_id.id))
 
       // Retrieve the group name from the parent chat
@@ -145,7 +147,8 @@ window.addEventListener('message', (e) => {
         return acc
       }, {})
 
-      for (let i = 0; i < poll.__x__pollOptionsToLinks.size; i++) {
+      // This was earlier: poll.__x__pollOptionsToLinks.size
+      for (let i = 0; i < poll.__x_pollOptions.length; i++) {
         csv += voteAccumulator[i] ? voteAccumulator[i] : 0;
         csv += ",";
       }
@@ -160,7 +163,7 @@ window.addEventListener('message', (e) => {
         const sanitizedName = rawName.replace(/[^\w\s]/gi, '').trim();
 
         let res = `"${sanitizedName}"` + "," + x.__x_sender.user;
-        for (let i = 0; i < poll.__x__pollOptionsToLinks.size; i++) {
+        for (let i = 0; i < poll.__x_pollOptions.length; i++) {
           res += x.__x_selectedOptionLocalIds.includes(i) ? ",X" : ",";
         }
         return res;
