@@ -1,6 +1,6 @@
 {
     "name": "Export WhatsApp Polls",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "Export Your WhatsApp Polls To Excel",
     "icons": {
         "16": "icons/16.png",
